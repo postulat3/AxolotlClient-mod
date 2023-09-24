@@ -56,6 +56,7 @@ import org.lwjgl.opengl.GLContext;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -79,7 +80,10 @@ public abstract class GameRendererMixin {
 	private float fogBlue;
 	@Shadow
 	private boolean thickFog;
+	@Unique
 	private float cachedMouseFactor;
+	@Shadow
+	private boolean renderingPanorama;
 
 	@Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseInput;x:I"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
 	public void axolotlclient$rawMouseInput(float tickDelta, long nanoTime, CallbackInfo ci, boolean displayActive, float f,
@@ -171,8 +175,13 @@ public abstract class GameRendererMixin {
 	@Shadow
 	protected abstract FloatBuffer updateFogColorBuffer(float red, float green, float blue, float alpha);
 
-	@Inject(method = "getFov", at = @At(value = "RETURN", ordinal = 1), cancellable = true)
+	@Inject(method = "getFov", at = @At(value = "RETURN"), cancellable = true)
 	public void axolotlclient$setZoom(float tickDelta, boolean changingFov, CallbackInfoReturnable<Float> cir) {
+
+		if (renderingPanorama) {
+			return;
+		}
+
 		Zoom.update();
 
 		float returnValue = cir.getReturnValue();
@@ -293,6 +302,13 @@ public abstract class GameRendererMixin {
 			GlStateManager.rotate(MathHelper.sin(h * (float) Math.PI) * i * 3.0F, 0.0F, 0.0F, 1.0F);
 			GlStateManager.rotate(Math.abs(MathHelper.cos(h * (float) Math.PI - 0.2F) * i) * 5.0F, 1.0F, 0.0F, 0.0F);
 			GlStateManager.rotate(j, 1.0F, 0.0F, 0.0F);
+			ci.cancel();
+		}
+	}
+
+	@Inject(method = "bobViewWhenHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getCameraEntity()Lnet/minecraft/entity/Entity;", ordinal = 1), cancellable = true)
+	private void axolotlclient$noHurtCam(float f, CallbackInfo ci) {
+		if (AxolotlClient.CONFIG.noHurtCam.get()) {
 			ci.cancel();
 		}
 	}

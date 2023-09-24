@@ -241,6 +241,7 @@ public class CrosshairHud extends AbstractHudEntry implements DynamicallyPositio
 			}
 		}
 		RenderSystem.disableBlend();
+		RenderSystem.defaultBlendFunc();
 		matrices.pop();
 	}
 

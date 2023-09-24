@@ -84,18 +84,21 @@ public class Particles extends AbstractModule {
 
 	public void applyOptions(Particle particle) {
 		if (enabled.get() && particleMap.containsKey(particle)) {
-			HashMap<String, Option<?>> options = particleOptions.get(particleMap.get(particle));
+			ParticleType type = particleMap.get(particle);
+			if (particleOptions.containsKey(type)) {
+				HashMap<String, Option<?>> options = particleOptions.get(type);
 
-			if (((BooleanOption) options.get("customColor")).get()) {
-				Color color = ((ColorOption) options.get("color")).get();
-				particle.setColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
-				((ParticleAccessor) particle).setAlpha(color.getAlpha() / 255F);
+				if (((BooleanOption) options.get("customColor")).get()) {
+					Color color = ((ColorOption) options.get("color")).get();
+					particle.setColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
+					((ParticleAccessor) particle).setAlpha(color.getAlpha() / 255F);
+				}
 			}
 		}
 	}
 
 	public int getMultiplier(ParticleType type) {
-		if (enabled.get()) {
+		if (enabled.get() && particleOptions.containsKey(type)) {
 			HashMap<String, Option<?>> options = particleOptions.get(type);
 
 			return ((IntegerOption) options.get("count")).get();
@@ -104,7 +107,7 @@ public class Particles extends AbstractModule {
 	}
 
 	public boolean getAlwaysOn(ParticleType type) {
-		return enabled.get()
+		return enabled.get() && particleOptions.containsKey(type)
 			&& ((BooleanOption) Particles.getInstance().particleOptions.get(type).get("alwaysCrit"))
 			.get();
 	}
@@ -114,9 +117,8 @@ public class Particles extends AbstractModule {
 	}
 
 	public boolean getShowParticle(ParticleType type) {
-		return enabled.get()
-			? ((BooleanOption) Particles.getInstance().particleOptions.get(type).get("showParticle"))
-			.get()
+		return enabled.get() && particleOptions.containsKey(type)
+			? ((BooleanOption) Particles.getInstance().particleOptions.get(type).get("showParticle")).get()
 			: true;
 	}
 

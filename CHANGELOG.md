@@ -121,3 +121,24 @@
 - fix *more* bugs
 - re-instantiate modmenu compat on 1.16 versions
 - fix compatibility with darkloadingscreen
+
+### 3.0.3
+
+- update to 1.20
+- update Chinese translations (HowardZHY)
+- fix a reach hud bug on 1.8.9
+
+### 3.0.4
+
+- add DarkKronicle's Bedwars Overlay
+- fix the controls screen crashing in 1.8.9
+- add option to remove the vignette
+- fix the sky impl mistaking suns for skies
+- fix a client lockup issue on 1.8.9
+- fix PlayerHud scaling on 1.8.9
+
+### 3.0.5
+
+- the TeamUpgradesHud now uses texture atlases provided by the game
+to improve performance
+- fix issues with the Bedwars Module

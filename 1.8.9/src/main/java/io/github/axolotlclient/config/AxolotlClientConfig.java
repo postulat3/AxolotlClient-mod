@@ -56,9 +56,11 @@ public class AxolotlClientConfig extends ConfigHolder {
 	public final IntegerOption cloudHeight = new IntegerOption("cloudHeight", 128, 100, 512);
 	public final BooleanOption dynamicFOV = new BooleanOption("dynamicFov", true);
 	public final BooleanOption fullBright = new BooleanOption("fullBright", false);
+	public final BooleanOption removeVignette = new BooleanOption("removeVignette", false);
 	public final BooleanOption lowFire = new BooleanOption("lowFire", false);
 	public final ColorOption hitColor = new ColorOption("hitColor", new Color(255, 0, 0, 77));
 	public final BooleanOption minimalViewBob = new BooleanOption("minimalViewBob", false);
+	public final BooleanOption noHurtCam = new BooleanOption("noHurtCam", false);
 	public final BooleanOption flatItems = new BooleanOption("flatItems", false);
 
 	public final ColorOption loadingScreenColor = new ColorOption("loadingBgColor", new Color(-1));
@@ -138,10 +140,13 @@ public class AxolotlClientConfig extends ConfigHolder {
 			AxolotlClientConfigConfig.chromaSpeed,
 			dynamicFOV,
 			fullBright,
+			removeVignette,
 			lowFire,
 			hitColor,
 			minimalViewBob,
-			flatItems);
+			flatItems,
+			noHurtCam);
+
 
 		timeChanger.add(timeChangerEnabled);
 		timeChanger.add(customTime);

@@ -51,7 +51,6 @@ public class SkyResourceManager extends AbstractModule implements IdentifiableRe
 
 	private static final SkyResourceManager Instance = new SkyResourceManager();
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	private static boolean initialized = false;
 
 	public static SkyResourceManager getInstance() {
 		return Instance;
@@ -64,9 +63,6 @@ public class SkyResourceManager extends AbstractModule implements IdentifiableRe
 
 	@Override
 	public void reload(ResourceManager resourceManager) {
-		if (initialized) {
-			return;
-		}
 		SkyboxManager.getInstance().clearSkyboxes();
 		for (Map.Entry<Identifier, Resource> entry : ((SearchableResourceManager) resourceManager)
 			.findResources("fabricskyboxes", "sky", identifier -> identifier.getPath().endsWith(".json"))
@@ -79,19 +75,22 @@ public class SkyResourceManager extends AbstractModule implements IdentifiableRe
 		}
 
 		for (Map.Entry<Identifier, Resource> entry : ((SearchableResourceManager) resourceManager)
-			.findResources("minecraft", "optifine/sky", identifier -> identifier.getPath().endsWith(".properties"))
+			.findResources("minecraft", "optifine/sky", identifier -> isMCPSky(identifier.getPath()))
 			.entrySet()) {
 			AxolotlClient.LOGGER.debug("Loaded sky: " + entry.getKey());
 			loadMCPSky("optifine", entry.getKey(), entry.getValue());
 		}
 
 		for (Map.Entry<Identifier, Resource> entry : ((SearchableResourceManager) resourceManager)
-			.findResources("minecraft", "mcpatcher/sky", identifier -> identifier.getPath().endsWith(".properties"))
+			.findResources("minecraft", "mcpatcher/sky", identifier -> isMCPSky(identifier.getPath()))
 			.entrySet()) {
 			AxolotlClient.LOGGER.debug("Loaded sky: " + entry.getKey());
 			loadMCPSky("mcpatcher", entry.getKey(), entry.getValue());
 		}
-		initialized = true;
+	}
+
+	private boolean isMCPSky(String path){
+		return path.endsWith(".properties") && path.startsWith("sky");
 	}
 
 	private void loadMCPSky(String loader, Identifier id, Resource resource) {
